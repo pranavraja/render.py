@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys
 import argparse
+import os
 
 parser = argparse.ArgumentParser(description='Apply a format transform to stdin')
 parser.add_argument('inputfile', nargs='?', type=argparse.FileType('r'), default=sys.stdin, help='Input string (default stdin)')
@@ -11,7 +12,9 @@ args = parser.parse_args()
 
 if args.skip_first: args.inputfile.next()
 for line in args.inputfile:
-    if not args.format:
+    line = line.rstrip()
+    if args.format:
+        sys.stdout.write(args.format.format(*line.split(args.delimiter)))
+    else:
         sys.stdout.write(line)
-        continue
-    sys.stdout.write(args.format.format(*line.split(args.delimiter)))
+    sys.stdout.write(os.linesep)
